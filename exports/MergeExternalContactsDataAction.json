@@ -1,0 +1,49 @@
+{
+  "name": "Merge External Contacts",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/externalcontacts/merge/contacts",
+      "requestType": "POST",
+      "headers": {},
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {},
+      "translationMapDefaults": {},
+      "successTemplate": "${rawResult}"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "type": "object",
+        "required": ["sourceContactId", "targetContactId"],
+        "properties": {
+          "sourceContactId": {
+            "description": "The ID of the source contact for the merge operation. Must be either an \"ephemeral\" or \"identified\" contact (not \"curated\").",
+            "type": "string"
+          },
+          "targetContactId": {
+            "description": "The ID of the target contact for the merge operation. Only contacts of type \"curated\" may be the target of a merge (not ephemeral or identified).",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}

@@ -1,0 +1,144 @@
+botFlow:
+  name: {{bot_name}}
+  description: ""
+  division: {{division}}
+  startUpRef: "/botFlow/bots/bot[Default Bot_10]"
+  defaultLanguage: {{default_language}}
+  supportedLanguages:
+    en-us:
+      defaultLanguageSkill:
+        noValue: true
+  variables:
+    - stringVariable:
+        name: Slot.Email
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: true
+  settingsActionDefaults:
+    askForIntent:
+      voiceEndOfInputTimeout:
+        lit:
+          seconds: 1
+    askForBoolean:
+      voiceEndOfInputTimeout:
+        lit:
+          seconds: 1
+    askForSlot:
+      voiceEndOfInputTimeout:
+        lit:
+          seconds: 1
+    loopAnythingElse:
+      voiceEndOfInputTimeout:
+        lit:
+          seconds: 1
+  settingsErrorHandling:
+    errorHandling:
+      exit:
+        none: true
+    enableAgentEscalation:
+      lit: true
+    errorEventHandover:
+      exp: "MakeCommunication(\n  \"Sorry, an error occurred. One moment, please, while I put you through to someone who can help.\")"
+    agentEscalationConfirmation:
+      exp: "MakeCommunication(\n  \"You want to speak to an advisor. Is that correct?\")"
+    agentEscalationHandover:
+      exp: "MakeCommunication(\n  \"One moment, please, and I will put you through to someone.\")"
+    recognitionFailureEventHandover:
+      exp: "MakeCommunication(\n  \"Sorry, I'm having trouble understanding you. One moment, please, while I put you through to someone who can help.\")"
+    recognitionFailureEventHandling:
+      exit:
+        none: true
+    agentEscalationHandling:
+      exit:
+        none: true
+  settingsPrompts:
+    ensureAudioInPrompts: false
+    promptMediaToValidate:
+      - mediaType: audio
+      - mediaType: tts
+  settingsBotFlow:
+    none: true
+  settingsUserInput:
+    enableBargeIn:
+      lit: true
+    enableAutomaticQuickReplies:
+      lit: true
+    noMatchesMax:
+      lit: 3
+    noInputsMax:
+      lit: 3
+    noInputsTimeout:
+      lit:
+        seconds: 7
+    speechToTextSpeechDetectionSensitivity:
+      noValue: true
+    speechToTextMaxSpeechTimeout:
+      noValue: true
+    enableIntentClassificationHinting:
+      lit: false
+    confirmationRejectionsMax:
+      lit: 3
+    collectionLowConfidenceThreshold:
+      lit: 20
+    collectionHighConfidenceThreshold:
+      lit: 70
+    confirmationLowConfidenceThreshold:
+      lit: 40
+    noMatchApology:
+      exp: "MakeCommunication(\n  \"Sorry.\")"
+    noInputApology:
+      exp: "MakeCommunication(\n  \"Sorry, I didn't hear you.\")"
+    noToConfirmationApology:
+      exp: "MakeCommunication(\n  \"My mistake.\")"
+    confirmationNoMatchApology:
+      exp: "MakeCommunication(\n  \"Sorry, please say yes or no.\")"
+    confirmationNoInputApology:
+      exp: "MakeCommunication(\n  \"Sorry, I didn't hear you.  Please say yes or no.\")"
+  settingsKnowledge:
+    none: true
+  bots:
+    - bot:
+        name: Default Bot
+        refId: Default Bot_10
+        actions:
+          - askForSlot:
+              name: Ask for Slot
+              slot:
+                name: Email
+              question:
+                exp: "MakeCommunication(\n  \"Hello! In order for you to chat with our support, please provide your email address.\")"
+              customValidation:
+                noValue: true
+              confirmationMode:
+                lit: never
+              noInput:
+                exp: "MakeCommunication(\n  \"Please enter your email to start.\")"
+              noMatch:
+                exp: "MakeCommunication(\n  \"The one you sent is either invalid or incorrect.\", \n  \"Please enter your email to start.\")"
+              voiceEndOfInputTimeout:
+                lit:
+                  seconds: 5
+              outputs:
+                maxNoInputs:
+                  enabled: false
+          - exitBotFlow:
+              name: Exit Bot Flow
+  settingsNaturalLanguageUnderstanding:
+    nluDomainVersion:
+      intents: []
+      entities:
+        - name: Email
+          type: EmailType
+      entityTypes:
+        - name: EmailType
+          description: The description of the Entity Type "EmailType"
+          mechanism:
+            type: Regex
+            restricted: true
+            items:
+              - value: "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+                synonyms: []
+      language: en-us
+      languageVersions: {}
+    mutedUtterances: []
