@@ -1,0 +1,52 @@
+{
+  "name": "Get External Contact Id for Customer Participant v2",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/conversations/${input.conversationId}",
+      "requestType": "GET",
+      "headers": {},
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {
+        "customerIdArray": "$.participants[?(@.purpose ==\"customer\")].externalContactId",
+        "externalIdArray": "$.participants[?(@.purpose ==\"external\")].externalContactId"
+      },
+      "translationMapDefaults": {
+        "customerIdArray": "[\"\"]",
+        "externalIdArray": "[\"\"]"
+      },
+      "successTemplate": "{\"externalContactId_external\": ${successTemplateUtils.firstFromArray(\"${customerIdArray}\", \"$esc.quote$esc.quote\")}, \"externalContactId_customer\": ${successTemplateUtils.firstFromArray(\"${externalIdArray}\", \"$esc.quote$esc.quote\")}}"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "type": "object",
+        "properties": {
+          "externalContactId_external": {
+            "type": "string"
+          },
+          "externalContactId_customer": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}

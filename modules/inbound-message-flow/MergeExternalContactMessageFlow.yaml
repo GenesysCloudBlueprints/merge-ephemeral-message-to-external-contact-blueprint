@@ -1,0 +1,93 @@
+inboundShortMessage:
+  name: {{flow_name}}
+  description: ""
+  division: {{division}}
+  startUpRef: "/inboundShortMessage/states/state[Initial State_10]"
+  defaultLanguage: {{default_language}}
+  supportedLanguages:
+    en-us:
+      defaultLanguageSkill:
+        noValue: true
+  settingsErrorHandling:
+    errorHandling:
+      disconnect:
+        none: true
+  states:
+    - state:
+        name: Initial State
+        refId: Initial State_10
+        variables:
+          - stringVariable:
+              name: State.CustomerEmail
+              initialValue:
+                noValue: true
+              isInput: false
+              isOutput: false
+          - stringVariable:
+              name: State.CustomerId
+              initialValue:
+                noValue: true
+              isInput: false
+              isOutput: false
+          - booleanVariable:
+              name: State.ModuleSuccess
+              initialValue:
+                noValue: true
+              isInput: false
+              isOutput: false
+        actions:
+          - callBotFlow:
+              name: Call Bot Flow
+              inputText:
+                exp: Message.Message.body
+              exitReason:
+                noValue: true
+              intent:
+                noValue: true
+              botFlow:
+                {{bot_flow_name}}:
+                  ver_latestPublished:
+                    inputs:
+                      Slot.Email:
+                        noValue: true
+                    outputs:
+                      Slot.Email:
+                        var: State.CustomerEmail
+          - sendResponse:
+              name: Send Response
+              messageBody:
+                exp: "Trim(Append(\n    \"Hello \", \n    \" \", \n    ToDisplayString(State.CustomerEmail), \n    If(IsNotSetOrEmpty(ToDisplayString(State.CustomerEmail)), \"\", \" \"), \n    \"! Please wait as we route you to an agent shortly.\"))"
+          - callCommonModule:
+              name: Call Common Module
+              commonModule:
+                {{common_module_name}}:
+                  ver_latestPublished:
+                    inputs:
+                      Common.conversationId:
+                        exp: Message.ConversationId
+                      Common.identifierType:
+                        lit: Email
+                      Common.identifierValue:
+                        exp: State.CustomerEmail
+                    outputs:
+                      Common.success:
+                        var: State.ModuleSuccess
+                      Common.externalContactId:
+                        var: State.CustomerId
+          - sendResponse:
+              name: Send Response
+              messageBody:
+                exp: "Trim(Append(\n    \"Common Module Status: \", \n    \" \", \n    ToDisplayString(If(State.ModuleSuccess, \"Success. \", \"Failed. \")), \n    If(IsNotSetOrEmpty(ToDisplayString(If(State.ModuleSuccess, \"Success. \", \"Failed. \"))), \"\", \" \"), \n    \"Customer ID: \", \n    \" \", \n    ToDisplayString(If(State.ModuleSuccess, State.CustomerId, \"Module Failed.\"))))"
+          - transferToAcd:
+              name: Transfer to ACD
+              targetQueue:
+                lit:
+                  name: {{queue_name}}
+              priority:
+                lit: 0
+              preferredAgents:
+                noValue: true
+              languageSkill:
+                noValue: true
+              directAgent:
+                noValue: true
