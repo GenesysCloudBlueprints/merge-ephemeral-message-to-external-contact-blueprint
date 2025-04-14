@@ -1,0 +1,64 @@
+{
+  "name": "Fetch External Contact by Identifier",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/externalcontacts/identifierlookup",
+      "requestType": "POST",
+      "headers": {},
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {},
+      "translationMapDefaults": {},
+      "successTemplate": "${rawResult}"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "type": "object",
+        "required": ["type", "value"],
+        "properties": {
+          "type": {
+            "description": "The type of this identifier",
+            "type": "string",
+            "enum": [
+              "Phone",
+              "Email",
+              "Cookie",
+              "SocialWhatsapp",
+              "SocialTwitter",
+              "SocialFacebook",
+              "SocialLine"
+            ]
+          },
+          "value": {
+            "description": " The string value of the identifier. Will vary in syntax by type.",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}

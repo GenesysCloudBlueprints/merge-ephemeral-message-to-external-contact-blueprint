@@ -1,0 +1,257 @@
+commonModule:
+  name: {{module_name}}
+  description: ""
+  division: {{division}}
+  supportedLanguages:
+    en-us:
+      none: true
+  variables:
+    - stringVariable:
+        name: Common.conversationId
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Common.customerId
+        initialValue:
+          lit: ""
+        isInput: false
+        isOutput: false
+    - stringVariable:
+        name: Common.errorMessage
+        initialValue:
+          noValue: true
+        isInput: false
+        isOutput: false
+    - stringVariable:
+        name: Common.externalContactId
+        initialValue:
+          noValue: true
+        isInput: false
+        isOutput: true
+    - stringVariable:
+        name: Common.externalId
+        initialValue:
+          lit: ""
+        isInput: false
+        isOutput: false
+    - stringVariable:
+        name: Common.identifiedContactId
+        initialValue:
+          noValue: true
+        isInput: false
+        isOutput: false
+    - stringVariable:
+        name: Common.identifierType
+        description: "The type of identifier for the current conversation. The valid types are:\n\nPhone, Email, Cookie, Social_twitter, Social_facebook, Social_line, Social_whatsapp"
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Common.identifierValue
+        description: The value for the identifier type. e.g. "john@company.com" for an email, or "+14165554444" for a phoneNumber. The value must correspond to the identifierType input value.
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - booleanVariable:
+        name: Common.success
+        initialValue:
+          lit: false
+        isInput: false
+        isOutput: true
+  settingsCommonModule:
+    compatibleFlowTypes:
+      - flowType: inboundshortmessage
+      - flowType: inboundcall
+      - flowType: inboundemail
+      - flowType: workflow
+  settingsActionDefaults:
+    callData:
+      processingPrompt:
+        noValue: true
+    callDataSecure:
+      processingPrompt:
+        noValue: true
+  settingsPrompts:
+    ensureAudioInPrompts: false
+    promptMediaToValidate:
+      - mediaType: audio
+      - mediaType: tts
+  startUpTaskActions:
+    - callData:
+        name: Find contact by given identifier
+        processingPrompt:
+          noValue: true
+        category:
+          {{data_action_category}}:
+            dataAction:
+              {{fetch_external_contact_by_identifier_data_action}}:
+                inputs:
+                  type:
+                    exp: Common.identifierType
+                  value:
+                    exp: Common.identifierValue
+                successOutputs:
+                  id:
+                    var: Common.identifiedContactId
+                  firstName:
+                    noValue: true
+                  lastName:
+                    noValue: true
+                failureOutputs:
+                  errorCode:
+                    noValue: true
+                  status:
+                    noValue: true
+                  correlationId:
+                    noValue: true
+                  entityId:
+                    noValue: true
+                  entityName:
+                    noValue: true
+                  userMessage:
+                    var: Common.errorMessage
+                  userParamsMessage:
+                    noValue: true
+                  userParams.key:
+                    noValue: true
+                  userParams.value:
+                    noValue: true
+                  details.errorCode:
+                    noValue: true
+                  details.fieldName:
+                    noValue: true
+                  details.entityId:
+                    noValue: true
+                  details.entityName:
+                    noValue: true
+        outputs:
+          success:
+            actions:
+              - callData:
+                  name: Get contact Id from message
+                  processingPrompt:
+                    noValue: true
+                  category:
+                    {{data_action_category}}:
+                      dataAction:
+                        {{get_external_contact_id_for_customer_participant_data_action}}:
+                          inputs:
+                            conversationId:
+                              exp: Common.conversationId
+                          successOutputs:
+                            externalContactId_external:
+                              var: Common.externalId
+                            externalContactId_customer:
+                              var: Common.customerId
+                          failureOutputs:
+                            errorCode:
+                              noValue: true
+                            status:
+                              noValue: true
+                            correlationId:
+                              noValue: true
+                            entityId:
+                              noValue: true
+                            entityName:
+                              noValue: true
+                            userMessage:
+                              var: Common.errorMessage
+                            userParamsMessage:
+                              noValue: true
+                            userParams.key:
+                              noValue: true
+                            userParams.value:
+                              noValue: true
+                            details.errorCode:
+                              noValue: true
+                            details.fieldName:
+                              noValue: true
+                            details.entityId:
+                              noValue: true
+                            details.entityName:
+                              noValue: true
+                  outputs:
+                    success:
+                      actions:
+                        - decision:
+                            name: Message contact known?
+                            condition:
+                              exp: Common.identifiedContactId == Common.externalId OR Common.identifiedContactId == Common.customerId
+                            outputs:
+                              "yes":
+                                actions:
+                                  - updateData:
+                                      name: Update Data
+                                      statements:
+                                        - string:
+                                            variable: Common.externalContactId
+                                            value:
+                                              exp: Common.identifiedContactId
+                                  - updateData:
+                                      name: Update Data
+                                      statements:
+                                        - boolean:
+                                            variable: Common.success
+                                            value:
+                                              lit: true
+                              "no":
+                                actions:
+                                  - callData:
+                                      name: Merge Identified + Curated
+                                      processingPrompt:
+                                        noValue: true
+                                      category:
+                                        {{data_action_category}}:
+                                          dataAction:
+                                            {{merge_external_contacts_data_action}}:
+                                              inputs:
+                                                sourceContactId:
+                                                  exp: If(IsSet(Common.externalId), Common.externalId, Common.customerId)
+                                                targetContactId:
+                                                  exp: Common.identifiedContactId
+                                              successOutputs:
+                                                id:
+                                                  var: Common.externalContactId
+                                              failureOutputs:
+                                                errorCode:
+                                                  noValue: true
+                                                status:
+                                                  noValue: true
+                                                correlationId:
+                                                  noValue: true
+                                                entityId:
+                                                  noValue: true
+                                                entityName:
+                                                  noValue: true
+                                                userMessage:
+                                                  var: Common.errorMessage
+                                                userParamsMessage:
+                                                  noValue: true
+                                                userParams.key:
+                                                  noValue: true
+                                                userParams.value:
+                                                  noValue: true
+                                                details.errorCode:
+                                                  noValue: true
+                                                details.fieldName:
+                                                  noValue: true
+                                                details.entityId:
+                                                  noValue: true
+                                                details.entityName:
+                                                  noValue: true
+                                      outputs:
+                                        success:
+                                          actions:
+                                            - updateData:
+                                                name: Update Data
+                                                statements:
+                                                  - boolean:
+                                                      variable: Common.success
+                                                      value:
+                                                        lit: true
+    - endTask:
+        name: Exit Common Module
