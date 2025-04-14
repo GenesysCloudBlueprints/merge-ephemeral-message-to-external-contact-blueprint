@@ -265,6 +265,8 @@ You can also use our tool in the Genesys Cloud Developer Center to test the flow
 2. Login to an admin account in the organization where you created your Genesys Cloud objects.
 3. Go to the **Web messenger** tab > **Deployments**. Then, choose the messenger deployment you just created.
 4. Once selected, click **Start Chat**.
+5. To test if the flow works, once you have started the chat, the bot will run and will ask for an email. Enter an email that is related to an existing external contact. If you haven't created a test external contact, there's [a guide on how to create an external contact](https://help.mypurecloud.com/articles/add-contact/ "Goes to Add Contact in Genesys Cloud Resource Center").
+6. The flow will then proceed to perform the common module. As a blueprint, the flow will send back a response in the chat if the common module made a successful operation. To check if the conversation is merged to the given external contact, go to **Directory** > **External Contacts** and look for the external contact you used. You will then see in **Interactions** list that your recent chat is in there.
 
 ![Web Chat/Messaging Tool Page](images/ephemeral-external-contact-11.png "Web Chat/Messaging Tool Page")
 
