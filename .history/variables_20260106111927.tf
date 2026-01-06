@@ -42,3 +42,18 @@ variable "web_deployment_name" {
   type        = string
   description = "The name of the web deployment"
 }
+variable "genesys_oauthclient_id" {
+  type        = string
+  description = "The OAuth Client ID for Genesys Cloud provider authentication"
+}
+
+variable "genesys_oauthclient_secret" {
+  type        = string
+  description = "The OAuth Client Secret for Genesys Cloud provider authentication"
+}
+
+variable "genesys_region" {
+  type        = string
+  description = "The Genesys Cloud region"
+  default     = "us-east-1"
+}

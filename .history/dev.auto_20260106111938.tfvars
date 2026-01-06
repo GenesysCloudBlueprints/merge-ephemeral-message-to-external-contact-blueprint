@@ -12,5 +12,10 @@ web_deployment_name               = "Merge External Contact Web Deployment"
 
 # IMPORTANT: Do not commit changes in this file that involves saving sensitive information here. This is usually
 # a bad idea. This file is not encrypted and is not meant to be used for sensitive information.
-client_id     = "client_id"
-client_secret = "client_secret"
+client_id     = "68c1a872-ed86-4f15-9bc1-64e5b862e5e1"
+client_secret = "KQQnpqFT0mllKH_kqo3zJn-_WOchzANqLk8zdNK1-bc"
+
+# Genesys Cloud Provider Authentication
+genesys_oauthclient_id     = "68c1a872-ed86-4f15-9bc1-64e5b862e5e1"
+genesys_oauthclient_secret = "KQQnpqFT0mllKH_kqo3zJn-_WOchzANqLk8zdNK1-bc"
+genesys_region             = "DCA"
