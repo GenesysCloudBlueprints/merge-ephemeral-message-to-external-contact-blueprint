@@ -1,6 +1,5 @@
 resource "genesyscloud_flow" "common_module" {
   filepath          = "${path.module}/ResolveContact.yaml"
-  file_content_hash = filesha256("${path.module}/ResolveContact.yaml")
   substitutions = {
     module_name                                                  = var.module_name
     division                                                     = var.division
